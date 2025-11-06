@@ -1,0 +1,13 @@
+*.db
+.env
+
+env/
+__pycache__/
+
+mlruns/
+mlartifacts/
+catboost_info/
+notebooks/
+
+.vscode/
+.pytest_cache/

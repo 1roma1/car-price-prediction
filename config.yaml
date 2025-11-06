@@ -1,0 +1,39 @@
+data_source: D:/Projects/Parsers/CarParser/database.db
+
+data_dir: data/
+raw_data_dir: data/raw/
+preprocessed_data_dir: data/preprocessed/
+raw_data: car_price_prediction.csv
+train_data: train.csv
+test_data: test.csv
+
+cols:
+  num_cols:
+    year: float32
+    mileage_km: float32
+    engine_capacity: float32
+    engine_power: float32
+    mixed_drive_fuel_consumption: float32
+    options: float32
+    price_usd_bin: float32
+
+  mul_cols:
+    brand: category
+    engine_type: category
+    transmission_type: category
+    interior_material: category
+    body_type: category
+    drive_type: category
+
+  target: 
+    price_usd: float32
+
+metrics:
+  - rmse
+
+test_size: 0.2
+random_state: 2002
+
+mlflow_uri: http://localhost:8080
+
+n_folds: 5
