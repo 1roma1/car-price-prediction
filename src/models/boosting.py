@@ -1,7 +1,7 @@
 from xgboost import XGBRegressor
 from catboost import CatBoostRegressor
 
-from src.model import TrainRegistry
+from src.model import ModelRegistry
 
-TrainRegistry.registry["xgb"] = XGBRegressor
-TrainRegistry.registry["cb"] = CatBoostRegressor
+ModelRegistry.registry["xgb"] = XGBRegressor
+ModelRegistry.registry["cb"] = CatBoostRegressor

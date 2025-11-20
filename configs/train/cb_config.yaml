@@ -1,0 +1,28 @@
+model_name: cb
+transformer_name: ct
+
+log_transform: false
+save: true
+
+cat_features:
+  - brand
+  - engine_type
+  - transmission_type
+  - interior_material
+  - body_type
+  - drive_type
+
+schema:
+  year: float32
+  mileage_km: float32
+  engine_capacity: float32
+  engine_power: float32
+  mixed_drive_fuel_consumption: float32
+  options: float32
+
+  brand: category
+  engine_type: category
+  transmission_type: category
+  interior_material: category
+  body_type: category
+  drive_type: category

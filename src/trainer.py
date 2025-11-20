@@ -5,11 +5,11 @@ import pandas as pd
 
 from optuna import Study
 from optuna.trial import FrozenTrial
-from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.model_selection import KFold
 
-from src.model import Model
+from src.model import BaseModel
 from src.metrics import get_metrics
-from src.models.hyperparam_spaces import spaces
+from src.hyperparameters import Hyperparameters
 from src.components import ArtifactManager, MlflowManager
 
 
@@ -48,29 +48,23 @@ class MlflowCallback:
 
 
 class CrossValidation:
-    def __init__(self, X, y, n_folds, stratify=None, stratify_col=None, random_state=1) -> None:
-        self.X = X.drop(labels=stratify_col.name, axis=1) if stratify_col is not None else X
+    def __init__(self, X, y, n_folds, random_state=1) -> None:
+        self.X = X
         self.y = y
         self.n_folds = n_folds
         self.random_state = random_state
 
-        validator = self._get_validator(stratify)
-        self.idxs = [
-            (train_idx, val_idx) for train_idx, val_idx in validator.split(X, stratify_col)
-        ]
+        validator = self._get_validator()
+        self.idxs = [(train_idx, val_idx) for train_idx, val_idx in validator.split(X)]
 
-    def _get_validator(self, stratify):
-        if stratify:
-            validator = StratifiedKFold(self.n_folds, shuffle=True, random_state=self.random_state)
-        else:
-            validator = KFold(
-                n_folds=self.n_folds,
-                shuffle=True,
-                random_state=self.random_state,
-            )
-        return validator
+    def _get_validator(self):
+        return KFold(
+            n_splits=self.n_folds,
+            shuffle=True,
+            random_state=self.random_state,
+        )
 
-    def validate(self, model: Model, metrics: dict):
+    def validate(self, model: BaseModel, metrics: dict):
         scores = {metric_name: [] for metric_name in metrics.keys()}
         for train_idx, val_idx in self.idxs:
             train_idx, val_idx = train_idx.tolist(), val_idx.tolist()
@@ -108,18 +102,18 @@ class Trainer:
     def _process_metrics(self, metrics: dict) -> dict:
         return {metric_name: np.mean(metrics[metric_name]) for metric_name in metrics.keys()}
 
-    def _get_cross_val_score(self, model: Model, metrics) -> dict:
+    def _get_cross_val_score(self, model: BaseModel, metrics) -> dict:
         scores = self.validator.validate(model, metrics)
         return self._process_metrics(scores)
 
     def _objective(
         self,
         trial,
-        model: Model,
+        model: BaseModel,
         metrics,
         optimization_metric,
     ):
-        params = spaces[model.model_name].get_hyperparameters(trial)
+        params = Hyperparameters.get_hyperparameters(model.estimator_name, trial)
         model.set_params(params)
 
         metrics = self._get_cross_val_score(model, metrics)
@@ -130,7 +124,7 @@ class Trainer:
     def train(
         self,
         experiment_name: str,
-        model: Model,
+        model: BaseModel,
         metrics: list,
         optimize: bool = False,
         optimization_metric="rmse",
@@ -165,8 +159,4 @@ class Trainer:
             mlflow.log_params(params)
             mlflow.log_metrics(metrics)
             if save:
-                model.save(
-                    self.X_train[:5],
-                    f"estimator_{root_run.info.run_name}",
-                    f"transformer_{root_run.info.run_name}",
-                )
+                model.save(self.X_train[:2])

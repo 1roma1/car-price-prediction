@@ -8,12 +8,12 @@ from sklearn.linear_model import (
     TheilSenRegressor,
 )
 
-from src.model import TrainRegistry
+from src.model import ModelRegistry
 
-TrainRegistry.registry["linreg"] = LinearRegression
-TrainRegistry.registry["ridge"] = Ridge
-TrainRegistry.registry["lasso"] = Lasso
-TrainRegistry.registry["bayesian"] = BayesianRidge
-TrainRegistry.registry["huber"] = HuberRegressor
-TrainRegistry.registry["ransac"] = RANSACRegressor
-TrainRegistry.registry["theilsen"] = TheilSenRegressor
+ModelRegistry.registry["linreg"] = LinearRegression
+ModelRegistry.registry["ridge"] = Ridge
+ModelRegistry.registry["lasso"] = Lasso
+ModelRegistry.registry["bayesian"] = BayesianRidge
+ModelRegistry.registry["huber"] = HuberRegressor
+ModelRegistry.registry["ransac"] = RANSACRegressor
+ModelRegistry.registry["theilsen"] = TheilSenRegressor

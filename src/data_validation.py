@@ -15,19 +15,47 @@ class DataSchema(BaseModel):
     engine_capacity: float
     engine_power: float
     mixed_drive_fuel_consumption: float
-    options: int
 
     brand: str
-    engine_type: Literal["бензин", "дизель", "электро", "другой"]
-    transmission_type: str
-    interior_material: str
-    body_type: Literal[
-        "внедорожник", "седан", "универсал", "хэтчбек", "минивэн", "лифтбек", "купе", "другой"
+    options: str
+    engine_type: Literal[
+        "бензин",
+        "дизель",
+        "электро",
+        "другой",
     ]
-    drive_type: str
+    transmission_type: Literal[
+        "механика",
+        "автомат",
+        "вариатор",
+        "робот",
+    ]
+    interior_material: Literal[
+        "ткань",
+        "натуральная кожа",
+        "комбинированные материалы",
+        "искусственная кожа",
+        "велюр",
+        "алькантара",
+    ]
+    body_type: Literal[
+        "внедорожник",
+        "седан",
+        "универсал",
+        "хэтчбек",
+        "минивэн",
+        "лифтбек",
+        "купе",
+        "другой",
+    ]
+    drive_type: Literal[
+        "передний привод",
+        "подключаемый полный привод",
+        "постоянный полный привод",
+        "задний привод",
+    ]
 
     price_usd: int
-    price_usd_bin: int
 
 
 def validate_data(df: pd.DataFrame):
@@ -36,10 +64,10 @@ def validate_data(df: pd.DataFrame):
 
 
 if __name__ == "__main__":
-    config = load_configuration("config.yaml")
+    config = load_configuration("configs/config.yaml")
 
     train_data_path = Path(config["preprocessed_data_dir"]) / config["train_data"]
-    test_data_path = Path(Path(config["preprocessed_data_dir"]) / config["test_data"])
+    test_data_path = Path(config["preprocessed_data_dir"]) / config["test_data"]
 
     train = pd.read_csv(train_data_path)
     test = pd.read_csv(test_data_path)

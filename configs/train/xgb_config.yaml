@@ -1,0 +1,10 @@
+model_name: xgb
+transformer_name: ss
+
+log_transform: false
+save: true
+
+optimization: true
+trials: 1
+direction: minimize
+optimization_metric: rmse

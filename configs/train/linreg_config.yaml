@@ -1,0 +1,5 @@
+model_name: linreg
+transformer_name: ss
+
+log_transform: true
+save: true

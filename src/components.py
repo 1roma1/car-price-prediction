@@ -37,7 +37,7 @@ class ArtifactManager:
 
     def log_artifacts(self, model, X, y):
         y_pred = model.predict(X)
-        if model.model_name in ArtifactManager.LINEAR_MODELS:
+        if model.estimator_name in ArtifactManager.LINEAR_MODELS:
             self._plot_feature_importance_lr(
                 model.transformer.get_feature_names_out(), model.estimator.coef_
             )

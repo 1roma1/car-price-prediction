@@ -1,7 +1,7 @@
 import mlflow
 import pandas as pd
 
-from src.model import Model
+from src.model import BaseModel
 from src.metrics import get_metrics
 from src.components import ArtifactManager, MlflowManager
 
@@ -14,7 +14,7 @@ class Evaluator:
         self.tracking_manager = tracking_manager
         self.artifact_manager = ArtifactManager()
 
-    def evaluate(self, experiment_name: str, model: Model, metrics: list, save: bool):
+    def evaluate(self, experiment_name: str, model: BaseModel, metrics: list, save: bool):
         metrics_fn = get_metrics(metrics)
         experiment = self.tracking_manager.set_experiment(experiment_name)
         with self.tracking_manager.start_run(experiment.experiment_id) as run:

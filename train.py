@@ -1,9 +1,10 @@
+import os
 import argparse
 from pathlib import Path
+from dotenv import load_dotenv
 
-from src.model import TrainRegistry
-from src.model import Model
-from src.features import transfomrers_map
+from src.model import ModelRegistry, get_model_class
+from src.features import Transformers
 from src.trainer import Trainer, MlflowManager, Optimizer, CrossValidation
 from src.utils import load_configuration, load_dataframe, get_X_y
 
@@ -11,16 +12,17 @@ from src.utils import load_configuration, load_dataframe, get_X_y
 def get_argv():
     parser = argparse.ArgumentParser(prog="Model Training")
     parser.add_argument("-e", "--experiment", type=str, help="MLflow experiment name")
+    parser.add_argument("--train-config", type=str, help="Traininig configuration")
     parser.add_argument(
         "-m",
         "--model",
-        choices=list(TrainRegistry.registry.keys()),
+        choices=list(ModelRegistry.registry.keys()),
         help="Model name",
     )
     parser.add_argument(
         "-tr",
         "--transformer",
-        type=str,
+        choices=list(Transformers.registry.keys()),
         default=None,
         help="Transformer name",
     )
@@ -66,33 +68,33 @@ def get_argv():
 
 def train():
     argv = get_argv()
-    config = load_configuration("config.yaml")
+    config = load_configuration("configs/config.yaml")
+    train_config = load_configuration(argv["train_config"])
 
     train_data_path = Path(config["preprocessed_data_dir"]) / config["train_data"]
     df = load_dataframe(train_data_path, config["cols"])
 
     X_train, y_train = get_X_y(df, list(config["cols"]["target"].keys())[0])
 
-    transformer = transfomrers_map[argv["transformer"]]() if argv["transformer"] else None
-
     validator = CrossValidation(
         X_train,
         y_train,
         n_folds=config["n_folds"],
-        stratify=True,
-        stratify_col=X_train["price_usd_bin"],
         random_state=config["random_state"],
     )
 
-    tracking_manager = MlflowManager(config["mlflow_uri"])
+    tracking_manager = MlflowManager(os.getenv("MLFLOW_TRACKING_URI"))
     optimizer = Optimizer(
-        direction=argv["direction"], n_trials=argv["trials"] if argv["optimize"] else None
+        direction=train_config.get("direction"),
+        n_trials=train_config.get("trials"),
     )
-    model = Model(
-        argv["model"],
-        transformer,
-        argv["logtr"],
-        cat_features=list(config["cols"]["mul_cols"].keys()),
+
+    model = get_model_class(train_config["model_name"])(
+        train_config["model_name"],
+        train_config.get("transformer_name"),
+        train_config["log_transform"],
+        schema=train_config.get("schema"),
+        cat_features=train_config.get("cat_features"),
     )
 
     trainer = Trainer(
@@ -106,11 +108,12 @@ def train():
         argv["experiment"],
         model,
         config["metrics"],
-        optimize=argv["optimize"],
-        optimization_metric=argv["optimization_metric"],
-        save=argv["save"],
+        optimize=train_config.get("optimization"),
+        optimization_metric=train_config.get("optimization_metric"),
+        save=train_config["save"],
     )
 
 
 if __name__ == "__main__":
+    load_dotenv()
     train()

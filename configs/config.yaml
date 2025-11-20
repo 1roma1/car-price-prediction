@@ -14,8 +14,6 @@ cols:
     engine_capacity: float32
     engine_power: float32
     mixed_drive_fuel_consumption: float32
-    options: float32
-    price_usd_bin: float32
 
   mul_cols:
     brand: category
@@ -24,6 +22,7 @@ cols:
     interior_material: category
     body_type: category
     drive_type: category
+    options: category
 
   target: 
     price_usd: float32
@@ -33,7 +32,5 @@ metrics:
 
 test_size: 0.2
 random_state: 2002
-
-mlflow_uri: http://localhost:8080
 
 n_folds: 5
