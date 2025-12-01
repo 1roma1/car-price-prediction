@@ -41,5 +41,4 @@ def get_hyperparameters(trial: Trial) -> dict:
         "learning_rate": trial.suggest_categorical(
             "learning_rate", [0.01, 0.05, 0.1, 0.2, 0.25, 0.3]
         ),
-        "enable_categorical": trial.suggest_categorical("enable_categorical", [True]),
     }
