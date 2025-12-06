@@ -1,31 +1,17 @@
-engine_types: 
-  - бензин
-  - дизель
-  - электро
-
-body_types:
-  - внедорожник
-  - седан
-  - универсал
-  - хэтчбек
-  - минивэн
-  - лифтбек
-  - купе
+cols:
+  - year
+  - mileage_km
+  - engine_capacity
+  - engine_power
+  - mixed_drive_fuel_consumption
+  - price_usd
+  - brand
+  - engine_type
+  - transmission_type
+  - interior_material
+  - body_type
+  - drive_type
+  - options
 
 min_year: 1978
 max_mileage: 600000
-
-cols:
-  year: float32
-  mileage_km: float32
-  engine_capacity: float32
-  engine_power: float32
-  mixed_drive_fuel_consumption: float32
-  price_usd: float32
-  brand: category
-  engine_type: category
-  transmission_type: category
-  interior_material: category
-  body_type: category
-  drive_type: category
-  options: category

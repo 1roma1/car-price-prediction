@@ -1,0 +1,10 @@
+model: linreg
+model_params:
+  estimator_name: linreg
+  transformer_name: ss
+  log_transform: true
+
+metrics:
+  - rmse
+  - mae
+  - r2_score

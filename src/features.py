@@ -10,26 +10,7 @@ from sklearn.preprocessing import (
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from typing import Any, Callable
-
-
-class Transformers:
-    registry: dict[str, Any] = {}
-
-    @classmethod
-    def register(cls, name: str) -> Callable:
-        def inner_wrapper(wrapped_func: Any) -> Any:
-            cls.registry[name] = wrapped_func
-            return wrapped_func
-
-        return inner_wrapper
-
-    @classmethod
-    def get_transformer(cls, name: str) -> Any:
-        if name in cls.registry:
-            return cls.registry[name]()
-        else:
-            raise ValueError(f"There is no model: {name}, available: {cls.registry.keys()}")
+from src.base.registries import TransformerRegistry
 
 
 class CountTransformer(BaseEstimator, TransformerMixin):
@@ -48,17 +29,20 @@ class CountTransformer(BaseEstimator, TransformerMixin):
         X = X.tolist()
 
         if isinstance(X[0], list):
-            X = [[len(str(item).split(self.delimiter)) for item in row] for row in X]
+            X = [
+                [len(str(item).split(self.delimiter)) for item in row]
+                for row in X
+            ]
         else:
             X = [len(str(item).split(self.delimiter)) for item in X]
 
-        return np.array(X, dtype=np.int32)
+        return np.array(X, dtype=np.float32)
 
     def get_feature_names_out(self, input_features=None):
         return np.array(self.feature_names, dtype=object)
 
 
-@Transformers.register("ss")
+@TransformerRegistry.register("ss")
 def get_standard_scaler_transformer():
     return ColumnTransformer(
         [
@@ -66,7 +50,10 @@ def get_standard_scaler_transformer():
                 "brand_enc",
                 Pipeline(
                     [
-                        ("target_enc", TargetEncoder(target_type="continuous")),
+                        (
+                            "target_enc",
+                            TargetEncoder(target_type="continuous"),
+                        ),
                         ("ss", StandardScaler()),
                     ]
                 ),
@@ -96,7 +83,9 @@ def get_standard_scaler_transformer():
             (
                 "oh",
                 OneHotEncoder(
-                    min_frequency=500, handle_unknown="infrequent_if_exist", sparse_output=False
+                    min_frequency=500,
+                    handle_unknown="infrequent_if_exist",
+                    sparse_output=False,
                 ),
                 [
                     "engine_type",
@@ -112,7 +101,7 @@ def get_standard_scaler_transformer():
     )
 
 
-@Transformers.register("ct")
+@TransformerRegistry.register("ct")
 def get_column_transformer():
     return ColumnTransformer(
         [

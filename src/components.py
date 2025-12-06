@@ -9,28 +9,6 @@ from pathlib import Path
 from mlflow.entities import Experiment
 
 
-class MlflowManager:
-    def __init__(self, tracking_uri: str) -> None:
-        mlflow.set_tracking_uri(tracking_uri)
-
-    def _get_or_create_experiment(self, experiment_name) -> str:
-        if experiment := mlflow.get_experiment_by_name(experiment_name):
-            return experiment.experiment_id
-        else:
-            return mlflow.create_experiment(experiment_name)
-
-    def set_experiment(self, experiment_name: str) -> Experiment:
-        experiment_id = self._get_or_create_experiment(experiment_name=experiment_name)
-        return mlflow.set_experiment(experiment_id=experiment_id)
-
-    def start_run(self, experiment_id, nested=False, parent_run_id=None):
-        return mlflow.start_run(
-            experiment_id=experiment_id,
-            nested=nested,
-            parent_run_id=parent_run_id,
-        )
-
-
 class ArtifactManager:
     LINEAR_MODELS = ["linreg", "ridge", "lasso"]
     XGB = ["xgb"]
@@ -39,7 +17,8 @@ class ArtifactManager:
         y_pred = model.predict(X)
         if model.estimator_name in ArtifactManager.LINEAR_MODELS:
             self._plot_feature_importance_lr(
-                model.transformer.get_feature_names_out(), model.estimator.coef_
+                model.transformer.get_feature_names_out(),
+                model.estimator.coef_,
             )
         self._plot_prediction_error(y, y_pred)
         self._get_prediction_sample(y, y_pred)

@@ -1,9 +1,10 @@
+from sklearn.metrics import r2_score
+from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import root_mean_squared_error
 
+from src.base.registries import MetricRegistry
 
-def get_metrics(metric_names):
-    metrics_map = {"rmse": root_mean_squared_error}
 
-    return {
-        metric_name: metrics_map[metric_name] for metric_name in metric_names
-    }
+MetricRegistry.registry["r2_score"] = r2_score
+MetricRegistry.registry["mae"] = mean_absolute_error
+MetricRegistry.registry["rmse"] = root_mean_squared_error

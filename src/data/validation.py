@@ -6,7 +6,7 @@ from pathlib import Path
 from pydantic import BaseModel
 from pandantic import Pandantic
 
-from utils import load_configuration
+from src.base.utils import load_configuration
 
 
 class DataSchema(BaseModel):
@@ -66,8 +66,12 @@ def validate_data(df: pd.DataFrame):
 if __name__ == "__main__":
     config = load_configuration("configs/config.yaml")
 
-    train_data_path = Path(config["preprocessed_data_dir"]) / config["train_data"]
-    test_data_path = Path(config["preprocessed_data_dir"]) / config["test_data"]
+    train_data_path = (
+        Path(config["preprocessed_data_dir"]) / config["train_data"]
+    )
+    test_data_path = (
+        Path(config["preprocessed_data_dir"]) / config["test_data"]
+    )
 
     train = pd.read_csv(train_data_path)
     test = pd.read_csv(test_data_path)

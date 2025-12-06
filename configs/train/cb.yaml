@@ -1,0 +1,18 @@
+model: cb
+model_params:
+  estimator_name: cb
+  transformer_name: ct
+  log_transform: true
+
+  cat_features:
+    - brand
+    - engine_type
+    - transmission_type
+    - interior_material
+    - body_type
+    - drive_type
+
+metrics:
+  - rmse
+  - mae
+  - r2_score

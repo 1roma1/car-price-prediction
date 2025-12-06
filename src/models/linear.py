@@ -8,7 +8,7 @@ from sklearn.linear_model import (
     TheilSenRegressor,
 )
 
-from src.model import ModelRegistry
+from src.base.registries import ModelRegistry
 
 ModelRegistry.registry["linreg"] = LinearRegression
 ModelRegistry.registry["ridge"] = Ridge

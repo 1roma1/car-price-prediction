@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from utils import load_configuration
+from src.base.utils import load_configuration
 
 
 def split(

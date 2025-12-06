@@ -3,16 +3,20 @@ import argparse
 from pathlib import Path
 from dotenv import load_dotenv
 
-from src.trainer import MlflowManager
-from src.utils import load_configuration, load_dataframe, get_X_y
+from src.base.trainer import MlflowManager
+from src.base.utils import load_configuration, load_dataframe, get_X_y
 from src.model import ModelRegistry, get_model_class
 from src.evaluator import Evaluator
 
 
 def get_argv():
     parser = argparse.ArgumentParser(prog="Model Training")
-    parser.add_argument("-e", "--experiment", type=str, help="MLflow experiment name")
-    parser.add_argument("--train-config", type=str, help="Traininig configuration")
+    parser.add_argument(
+        "-e", "--experiment", type=str, help="MLflow experiment name"
+    )
+    parser.add_argument(
+        "--train-config", type=str, help="Traininig configuration"
+    )
     parser.add_argument(
         "-m",
         "--model",
@@ -53,7 +57,9 @@ def evaluate():
     config = load_configuration("configs/config.yaml")
     train_config = load_configuration(argv.get("train_config"))
 
-    train_data_path = Path(config["preprocessed_data_dir"]) / config["test_data"]
+    train_data_path = (
+        Path(config["preprocessed_data_dir"]) / config["test_data"]
+    )
     df = load_dataframe(train_data_path, config["cols"])
 
     X_test, y_test = get_X_y(df, list(config["cols"]["target"].keys())[0])
@@ -70,7 +76,9 @@ def evaluate():
     )
     model.load(argv["estimator"], argv["transformer"])
 
-    evaluator.evaluate(argv["experiment"], model, config["metrics"], argv["save"])
+    evaluator.evaluate(
+        argv["experiment"], model, config["metrics"], argv["save"]
+    )
 
 
 if __name__ == "__main__":

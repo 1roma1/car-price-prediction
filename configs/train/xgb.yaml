@@ -1,0 +1,31 @@
+model: xgb
+model_params:
+  estimator_name: xgb
+  transformer_name: ct
+  log_transform: true
+
+  cat_features:
+    - brand
+    - engine_type
+    - transmission_type
+    - interior_material
+    - body_type
+    - drive_type
+
+  num_features:
+    - year
+    - options 
+    - mileage_km 
+    - engine_power
+    - engine_capacity 
+    - mixed_drive_fuel_consumption
+
+metrics:
+  - rmse
+  - mae
+  - r2_score
+
+optimizer_params:
+  direction: minimize
+  n_trials: 1
+  optimization_metric: rmse

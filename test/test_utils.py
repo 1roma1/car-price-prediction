@@ -1,6 +1,6 @@
 import yaml
 
-from src.utils import load_configuration
+from src.base.utils import load_configuration
 
 
 def test_load_configuration(tmp_path):

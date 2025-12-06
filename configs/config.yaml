@@ -27,8 +27,6 @@ cols:
   target: 
     price_usd: float32
 
-metrics:
-  - rmse
 
 test_size: 0.2
 random_state: 2002
