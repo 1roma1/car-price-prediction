@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from src.base.utils import load_configuration
+from src.base.utils import load_yaml
 
 
 def split(
@@ -28,7 +28,7 @@ def split(
 
 
 if __name__ == "__main__":
-    config = load_configuration("configs/config.yaml")
+    config = load_yaml("configs/config.yaml")
     data_path = Path(config["raw_data_dir"])
 
     split(

@@ -5,11 +5,11 @@ import pandas as pd
 
 from pathlib import Path
 
-from src.base.utils import load_configuration
+from src.base.utils import load_yaml
 
 
 def fetch_data_from_db(date: str) -> None:
-    config = load_configuration("configs/config.yaml")
+    config = load_yaml("configs/config.yaml")
 
     sql_stmt = """
     SELECT date(substr(refreshed_at, 0, 11)) as date, price_usd,

@@ -5,27 +5,25 @@ from pathlib import Path
 from sklearn.ensemble import IsolationForest
 from sklearn.pipeline import Pipeline
 
-from src.base.utils import (
-    load_configuration,
-    load_json,
-    get_or_create_experiment,
-)
+from src.base.utils import load_yaml, load_json
 from src.base.registries import TransformerRegistry
 
 
-def _extract_categories(x, categories, other="другой"):
+def extract_categories(
+    string: str, categories: list, other: str = "другой"
+) -> str:
     for category in categories:
-        if category in x:
+        if category in string:
             return category
     return other
 
 
-def _split_and_take_first(column):
-    return column.str.split().str[0]
+def split_and_take_first(series: pd.Series) -> pd.Series:
+    return series.str.split().str[0]
 
 
-def _replace(column, pat, repl):
-    return column.str.replace(pat, repl)
+def replace(column: pd.Series, old: str, new: str) -> pd.Series:
+    return column.str.replace(old, new)
 
 
 class Preprocessor:
@@ -33,7 +31,7 @@ class Preprocessor:
         self.features = features
         self.config = config
 
-    def _calculate_means(self, df: pd.DataFrame, columns) -> pd.DataFrame:
+    def _calculate_means(self, df: pd.DataFrame, columns) -> dict:
         return {column: df[column].mean() for column in columns}
 
     def _calculate_fillna_values(self, df: pd.DataFrame) -> dict:
@@ -75,16 +73,16 @@ class Preprocessor:
 
         df = df.assign(
             engine_type=df.engine_type.apply(
-                lambda x: _extract_categories(x, self.features["engine_types"])
+                lambda x: extract_categories(x, self.features["engine_types"])
             ),
             body_type=df.body_type.apply(
-                lambda x: _extract_categories(x, self.features["body_types"])
+                lambda x: extract_categories(x, self.features["body_types"])
             ),
-            engine_capacity=_replace(df.engine_capacity, ",", ".").astype(
+            engine_capacity=replace(df.engine_capacity, ",", ".").astype(
                 "float32"
             ),
-            mixed_drive_fuel_consumption=_replace(
-                _split_and_take_first(df.mixed_drive_fuel_consumption),
+            mixed_drive_fuel_consumption=replace(
+                split_and_take_first(df.mixed_drive_fuel_consumption),
                 ",",
                 ".",
             ).astype("float32"),
@@ -100,10 +98,8 @@ class Preprocessor:
 
 
 if __name__ == "__main__":
-    config = load_configuration("configs/config.yaml")
-    preprocessing_config = load_configuration(
-        "configs/preprocessing_config.yaml"
-    )
+    config = load_yaml("configs/config.yaml")
+    preprocessing_config = load_yaml("configs/preprocessing_config.yaml")
     features = load_json("data/features.json")
 
     raw_train = pd.read_csv(Path(config["raw_data_dir"], config["train_data"]))

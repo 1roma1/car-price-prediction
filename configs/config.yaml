@@ -8,24 +8,20 @@ train_data: train.csv
 test_data: test.csv
 
 cols:
-  num_cols:
-    year: float32
-    mileage_km: float32
-    engine_capacity: float32
-    engine_power: float32
-    mixed_drive_fuel_consumption: float32
-
-  mul_cols:
-    brand: category
-    engine_type: category
-    transmission_type: category
-    interior_material: category
-    body_type: category
-    drive_type: category
-    options: category
-
-  target: 
-    price_usd: float32
+  year: float32
+  mileage_km: float32
+  engine_capacity: float32
+  engine_power: float32
+  mixed_drive_fuel_consumption: float32
+  brand: category
+  engine_type: category
+  transmission_type: category
+  interior_material: category
+  body_type: category
+  drive_type: category
+  options: category
+  price_usd: float32
+target: price_usd
 
 
 test_size: 0.2

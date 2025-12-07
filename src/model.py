@@ -24,7 +24,7 @@ class BaseModel(ABC):
         self.log_transform = log_transform
         self.estimator = ModelRegistry.get_model(estimator_name)()
         self.transformer = (
-            TransformerRegistry.get_transformer(transformer_name)
+            TransformerRegistry.get_transformer(transformer_name)()
             if transformer_name is not None
             else None
         )
@@ -247,7 +247,10 @@ class CBModel(BaseModel):
         X_val: Optional[np.ndarray | pd.DataFrame] = None,
         y_val: Optional[np.ndarray | pd.Series] = None,
     ) -> None:
-        self.estimator.fit(X, y, cat_features=self.cat_features)
+        eval_set = (X_val, y_val) if X_val is not None else None
+        self.estimator.fit(
+            X, y, eval_set=eval_set, cat_features=self.cat_features
+        )
 
     def set_params(self, params: dict) -> None:
         self.estimator = CatBoostRegressor(**params)
