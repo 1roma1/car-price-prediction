@@ -2,7 +2,7 @@ import mlflow
 import numpy as np
 import pandas as pd
 
-from typing import Any, Callable, Optional
+from typing import Optional
 from abc import ABC, abstractmethod
 
 from mlflow.models import infer_signature
@@ -176,12 +176,8 @@ class XGBModel(BaseModel):
         estimator_name: str,
         transformer_name: str = None,
         log_transform: bool = False,
-        **kwargs,
     ) -> None:
         super().__init__(estimator_name, transformer_name, log_transform)
-        # self.schema = kwargs.get("schema")
-        self.cat_features = kwargs.get("cat_features")
-        self.num_features = kwargs.get("num_features")
 
     def fit_estimator(
         self,
@@ -190,11 +186,6 @@ class XGBModel(BaseModel):
         X_val: Optional[np.ndarray | pd.DataFrame] = None,
         y_val: Optional[np.ndarray | pd.Series] = None,
     ) -> None:
-        # X = X.astype({feature: "category" for feature in self.cat_features})
-        # if X_val is not None:
-        #     X_val = X_val.astype(
-        #         {feature: "category" for feature in self.cat_features}
-        #     )
         eval_set = [(X_val, y_val)] if X_val is not None else None
         self.estimator.fit(X, y, eval_set=eval_set, verbose=False)
 
@@ -212,6 +203,9 @@ class XGBModel(BaseModel):
                 pyfunc_predict_fn="transform",
                 signature=signature,
             )
+            X_tr = pd.DataFrame(
+                X_tr, columns=self.transformer.get_feature_names_out()
+            ).astype(np.float32)
 
         y_pred = self.estimator.predict(X_tr)
         signature = infer_signature(X_tr, y_pred)
@@ -244,6 +238,7 @@ class CBModel(BaseModel):
     ) -> None:
         super().__init__(estimator_name, transformer_name, log_transform)
         self.cat_features = kwargs.get("cat_features")
+        self.num_features = kwargs.get("num_features")
 
     def fit_estimator(
         self,
@@ -268,6 +263,15 @@ class CBModel(BaseModel):
                 pyfunc_predict_fn="transform",
                 signature=signature,
             )
+            X_tr = pd.DataFrame(
+                X_tr, columns=self.transformer.get_feature_names_out()
+            )
+            if hasattr(self, "cat_features"):
+                schema = {
+                    **{feature: "category" for feature in self.cat_features},
+                    **{feature: "float32" for feature in self.num_features},
+                }
+                X_tr = X_tr.astype(schema)
 
         y_pred = self.estimator.predict(X_tr)
         signature = infer_signature(X_tr, y_pred)

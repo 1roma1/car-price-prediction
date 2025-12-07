@@ -1,7 +1,7 @@
 model: xgb
 model_params:
   estimator_name: xgb
-  transformer_name: ct
+  transformer_name: ss
   log_transform: true
 
   cat_features:
@@ -27,5 +27,5 @@ metrics:
 
 optimizer_params:
   direction: minimize
-  n_trials: 1
+  n_trials: 2
   optimization_metric: rmse

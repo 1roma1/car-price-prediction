@@ -33,5 +33,4 @@ def get_hyperparameters(trial: Trial) -> dict:
         "min_child_weight": trial.suggest_categorical(
             "min_child_weight", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         ),
-        "enable_categorical": True,
     }

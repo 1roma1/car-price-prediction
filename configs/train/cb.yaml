@@ -12,6 +12,14 @@ model_params:
     - body_type
     - drive_type
 
+  num_features:
+    - year
+    - options 
+    - mileage_km 
+    - engine_power
+    - engine_capacity 
+    - mixed_drive_fuel_consumption
+
 metrics:
   - rmse
   - mae
