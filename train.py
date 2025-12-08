@@ -44,8 +44,7 @@ def train():
         random_state=config["random_state"],
     )
 
-    # mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-    mlflow.set_tracking_uri("http://127.0.0.1:8000")
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
 
     trainer = Trainer(
         X_train=X_train,

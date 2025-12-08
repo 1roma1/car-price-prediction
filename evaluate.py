@@ -1,17 +1,12 @@
 import os
 import argparse
 import mlflow
+import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 
 import src.metrics
-from src.base.utils import (
-    load_configuration,
-    load_dataframe,
-    get_X_y,
-    get_schema,
-)
-from src.model import ModelRegistry, get_model_class
+from src.base.utils import load_yaml, get_X_y
 from src.base.evaluator import Evaluator
 
 
@@ -41,23 +36,15 @@ def get_argv():
 
 def evaluate():
     argv = get_argv()
-    config = load_configuration("configs/config.yaml")
-    train_config = load_configuration(argv.get("train_config"))
+    config = load_yaml("configs/config.yaml")
+    train_config = load_yaml(argv.get("train_config"))
 
-    train_data_path = Path(
-        config["preprocessed_data_dir"], config["test_data"]
+    df = pd.read_csv(
+        Path(config["preprocessed_data_dir"], config["test_data"])
     )
-    df = load_dataframe(train_data_path, config["cols"])
+    X_test, y_test = get_X_y(df, config["cols"], config["target"])
 
-    X_test, y_test = get_X_y(
-        df,
-        get_schema(config["cols"]),
-        list(config["cols"]["target"].keys())[0],
-    )
-
-    # mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-    mlflow.set_tracking_uri("http://127.0.0.1:8000")
-
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
     evaluator = Evaluator(X_test, y_test, train_config)
     evaluator.evaluate(
         argv["experiment"], argv.get("estimator"), argv.get("transformer")

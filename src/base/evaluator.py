@@ -38,9 +38,5 @@ class Evaluator:
             for metric_name, metric_func in metrics_fn.items():
                 scores[metric_name] = metric_func(y_pred, self.y_test)
 
-            # self.artifact_manager.log_artifacts(
-            #     model, self.X_test, self.y_test
-            # )
             mlflow.log_metrics(scores)
-
             model.save(self.X_test[:1])
