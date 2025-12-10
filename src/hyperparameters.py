@@ -11,8 +11,48 @@ def ridge_hyperparameters(trial: Trial) -> dict:
     }
 
 
+@HyperparameterRegistry.register("lasso")
+def lasso_hyperparameters(trial: Trial) -> dict:
+    return {
+        "alpha": trial.suggest_categorical("alpha", np.logspace(-4, 2, 50)),
+    }
+
+
+@HyperparameterRegistry.register("tree")
+def tree_hyperparameters(trial: Trial) -> dict:
+    return {
+        "max_depth": trial.suggest_categorical(
+            "max_depth", list(range(3, 50, 2))
+        ),
+        "min_samples_split": trial.suggest_categorical(
+            "min_samples_split", list(range(2, 50, 2))
+        ),
+        "min_samples_leaf": trial.suggest_categorical(
+            "min_samples_leaf", list(range(1, 50, 2))
+        ),
+    }
+
+
+@HyperparameterRegistry.register("forest")
+def forest_hyperparameters(trial: Trial) -> dict:
+    return {
+        "n_estimators": trial.suggest_categorical(
+            "n_estimators", list(range(10, 100, 10))
+        ),
+        "max_depth": trial.suggest_categorical(
+            "max_depth", list(range(3, 50, 2))
+        ),
+        "min_samples_split": trial.suggest_categorical(
+            "min_samples_split", list(range(2, 50, 2))
+        ),
+        "min_samples_leaf": trial.suggest_categorical(
+            "min_samples_leaf", list(range(1, 50, 2))
+        ),
+    }
+
+
 @HyperparameterRegistry.register("xgb")
-def get_hyperparameters(trial: Trial) -> dict:
+def xgb_hyperparameters(trial: Trial) -> dict:
     return {
         "n_estimators": trial.suggest_categorical(
             "n_estimators", [50, 100, 150, 200, 250, 300, 400, 500]

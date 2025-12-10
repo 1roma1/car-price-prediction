@@ -42,7 +42,7 @@ def evaluate():
     df = pd.read_csv(
         Path(config["preprocessed_data_dir"], config["test_data"])
     )
-    X_test, y_test = get_X_y(df, config["cols"], config["target"])
+    X_test, y_test = get_X_y(df, config["target"])
 
     mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
     evaluator = Evaluator(X_test, y_test, train_config)

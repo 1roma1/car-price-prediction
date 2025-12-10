@@ -1,6 +1,9 @@
 # Car price prediction
 This repository hosts a machine learning project designed to predict the sale price of cars. The project includes a complete machine learning pipeline, covering data ingestion, data processing, model training, evaluation, experiment tracking with MLflow and data versioning with DVC.
 
+[FastAPI service](https://github.com/1roma1/car-price-prediction-api.git)     
+[Streamlit App](https://car-price-prediction-bel.streamlit.app/)
+
 ## Getting Started
 Follow these steps to set up the project and run the pipelines.
 
@@ -49,4 +52,22 @@ python train.py --experiment ExperimentName --train-config configs/train/model.y
 ```
 python train.py --experiment ExperimentName --train-config configs/train/model.yaml --estimator estimator_id --transformer transformer_id
 ```
-### 
+## Evaluation
+### Metrics
+The primary evaluation metrics used are:
+- $R^2$ Score
+- Mean Absolute Error (MAE)
+- Root Mean Squared Error (RMSE)
+
+### Results
+| Model | RMSE | MAE | $R^2$ |
+| --- | --- | --- | --- |
+| Random Forest | **4041** | **1748** | **0.918** |
+| CatBoost| 4115 | 1810 | 0.91 |
+| XGBoost| 4465 | 1903 | 0.89 |
+| Decision Tree| 4943 | 2156 | 0.87 |
+| Linear Regression| 10249 | 3071 | 0.61 |
+
+### Next Steps
+- Error analysis
+- Data drift detection

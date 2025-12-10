@@ -26,15 +26,15 @@ class ModelRegistry(BaseRegistry):
     registry: dict[str, Any] = {}
 
 
-class TransformerRegistry:
+class TransformerRegistry(BaseRegistry):
     registry: dict[str, Any] = {}
 
 
-class MetricRegistry:
+class MetricRegistry(BaseRegistry):
     registry: dict[str, Any] = {}
 
 
-class HyperparameterRegistry:
+class HyperparameterRegistry(BaseRegistry):
     registry: dict[str, Any] = {}
 
     @classmethod

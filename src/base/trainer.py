@@ -1,5 +1,6 @@
 import mlflow
 import optuna
+import xgboost
 import numpy as np
 import pandas as pd
 
@@ -95,9 +96,7 @@ class Trainer:
         return self._process_metrics(scores)
 
     def _objective(self, trial, model: BaseModel, metrics):
-        params = HyperparameterRegistry.get_hyperparameters(
-            model.estimator_name, trial
-        )
+        params = HyperparameterRegistry.get(model.estimator_name, trial)
         model.set_params(params)
 
         metrics = self._get_cross_val_score(model, metrics)
@@ -125,18 +124,15 @@ class Trainer:
                 params = study.best_params
                 metrics = study.best_trial.user_attrs
             else:
-                params = {}
+                params = self.config.get("estimator_params")
                 model.set_params(params)
                 metrics = self._get_cross_val_score(model, metrics_fn)
 
             model.set_params(params)
             model.fit(self.X_train, self.y_train)
 
-            # self.artifact_manager.log_artifacts(
-            #     model, self.X_train, self.y_train
-            # )
-
-            mlflow.log_params(params)
+            mlflow.log_params(self.config.get("model_params"))
+            mlflow.log_params(model.estimator.get_params())
             mlflow.log_metrics(metrics)
 
             model.save(self.X_train.iloc[:2, :])

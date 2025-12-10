@@ -8,7 +8,6 @@ from abc import ABC, abstractmethod
 from mlflow.models import infer_signature
 from catboost import CatBoostRegressor
 
-import src.features
 from src.base.registries import ModelRegistry, TransformerRegistry
 
 
@@ -22,9 +21,9 @@ class BaseModel(ABC):
         self.estimator_name = estimator_name
         self.transformer_name = transformer_name
         self.log_transform = log_transform
-        self.estimator = ModelRegistry.get_model(estimator_name)()
+        self.estimator = ModelRegistry.get(estimator_name)()
         self.transformer = (
-            TransformerRegistry.get_transformer(transformer_name)()
+            TransformerRegistry.get(transformer_name)()
             if transformer_name is not None
             else None
         )

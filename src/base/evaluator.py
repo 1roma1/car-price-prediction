@@ -34,9 +34,11 @@ class Evaluator:
         with mlflow.start_run(experiment_id=experiment.experiment_id):
             y_pred = model.predict(self.X_test)
 
-            scores = {}
+            metrics = {}
             for metric_name, metric_func in metrics_fn.items():
-                scores[metric_name] = metric_func(y_pred, self.y_test)
+                metrics[metric_name] = metric_func(y_pred, self.y_test)
 
-            mlflow.log_metrics(scores)
+            mlflow.log_params(self.config.get("model_params"))
+            mlflow.log_params(model.estimator.get_params())
+            mlflow.log_metrics(metrics)
             model.save(self.X_test[:1])

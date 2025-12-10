@@ -1,8 +1,8 @@
-model: xgb
+model: forest
 model_params:
-  estimator_name: xgb
+  estimator_name: forest
   transformer_name: ss
-  log_transform: true
+  log_transform: false
 
 metrics:
   - rmse
@@ -11,5 +11,5 @@ metrics:
 
 optimizer_params:
   direction: minimize
-  n_trials: 100
+  n_trials: 50
   optimization_metric: rmse

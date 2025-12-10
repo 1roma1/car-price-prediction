@@ -5,10 +5,7 @@ import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 
-import src.metrics
-import src.hyperparameters
 from src.base.trainer import Trainer, CrossValidation
-from src.models import linear
 from src.base.utils import load_yaml, get_X_y
 
 
@@ -32,11 +29,7 @@ def train():
         Path(config["preprocessed_data_dir"], config["train_data"])
     )
 
-    X_train, y_train = get_X_y(
-        df,
-        config["cols"],
-        config["target"],
-    )
+    X_train, y_train = get_X_y(df, config["target"])
     validator = CrossValidation(
         X_train,
         y_train,
